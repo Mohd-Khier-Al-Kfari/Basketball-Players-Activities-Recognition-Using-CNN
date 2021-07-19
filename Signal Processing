@@ -1,0 +1,153 @@
+  # -*- coding: utf-8 -*-
+  """
+  Created on Mon May 17 19:42:29 2021
+
+  @author: Mohd Kier AL Kfari
+  """
+
+  import pandas as pd
+  import datetime as dt
+
+
+  "1) Read Data"
+  def Read(File, flage = 1):
+
+      Data = pd.read_csv(r"{}.csv" .format(File), comment=';')
+      if flage:
+          Data = Shift(Data)
+      else:
+          Data = unix(Data)
+
+      return Data
+
+  "2) Correct the time"
+  def Shift(Data):
+      Data["time"] = Data["time"]
+      Data["time"] = Data["time"] +TimeStep
+      Data["time"] =Data["time"].round('10ms')
+      return Data
+
+  "3) Convert the unix timestamps to normal time"
+  def unix(Data):
+      Data["time"] = pd.to_datetime(Data["time"],unit = 'ms')
+      Data["time"] = Data["time"] + dt.timedelta(hours = 2)
+      Data["time"] = Data.loc[:,"time"].dt.strftime("%H:%M:%S.%f")
+      Data["time"] = pd.timedelta_range(start="{}".format(Data["time"][0]), periods=len(Data["time"]), end = "{}".format(Data["time"][len(Data["time"])-1])) 
+      Data["time"] =Data["time"].round('10ms')
+
+      return Data
+
+
+  "4) Time shift for the ankle and wrist sensors readed values"
+  Freq = 92
+  TimeStep = dt.timedelta(seconds = 1 / Freq) 
+
+
+  "5) Read all file"
+  dribbling_sbj2_ankle = Read("dribbling_sbj2_ankle")
+  dribbling_sbj2_wrist = Read("dribbling_sbj2_wrist")
+
+  layup_sbj1_ankle = Read("layup_sbj1_ankle")
+  layup_sbj1_wrist = Read("layup_sbj1_wrist")
+  layup_sbj2_ankle = Read("layup_sbj2_ankle")
+  layup_sbj2_wrist = Read("layup_sbj2_wrist")
+
+  movements_sbj1_ankle_1 = Read("movements_sbj1_ankle_1")
+  movements_sbj1_ankle_2 = Read("movements_sbj1_ankle_2")
+  movements_sbj1_wrist = Read("movements_sbj1_wrist")
+  movements_sbj2_ankle_1 = Read("movements_sbj2_ankle_1")
+  movements_sbj2_ankle_2 = Read("movements_sbj2_ankle_2")
+  movements_sbj2_wrist = Read("movements_sbj2_wrist")
+
+  shooting_sbj1_ankle = Read("shooting_sbj1_ankle")
+  shooting_sbj1_wrist = Read("shooting_sbj1_wrist")
+  shooting_sbj2_ankle_1 = Read("shooting_sbj2_ankle_1")
+  shooting_sbj2_ankle_2 = Read("shooting_sbj2_ankle_2")
+  shooting_sbj2_wrist = Read("shooting_sbj2_wrist")
+
+  eSense_sbj1 = Read("eSense_sbj1", 0)
+  eSense_sbj2 = Read("eSense_sbj2", 0)
+
+  "6) Activities time form the videos"
+
+  dribbling_sbj1_ts = {"Start": dt.timedelta(hours = 18, minutes = 33, seconds = 28, microseconds = 59),"End": dt.timedelta(hours = 18, minutes = 35, seconds = 44, microseconds = 1)}
+  dribbling_sbj2_ts = {"Start": dt.timedelta(hours = 19, minutes = 27, seconds = 2, microseconds = 27),"End": dt.timedelta(hours = 19, minutes = 29, seconds = 55, microseconds = 30)}
+
+  layup_sbj1_ts = {"Start": dt.timedelta(hours = 18, minutes = 23, seconds = 23, microseconds = 9),"End": dt.timedelta(hours = 18, minutes = 25, seconds = 23, microseconds = 26)}
+  layup_sbj2_ts = {"Start": dt.timedelta(hours = 19, minutes = 17, seconds = 42, microseconds = 19),"End": dt.timedelta(hours = 19, minutes = 20, seconds = 8, microseconds = 37)}
+
+  running_sbj1_ts = {"Start": dt.timedelta(hours = 18, minutes = 45, seconds = 18, microseconds = 69),"End": dt.timedelta(hours = 18, minutes = 47, seconds = 10, microseconds = 80)}
+  running_sbj2_ts = {"Start": dt.timedelta(hours = 19, minutes = 39, seconds = 47, microseconds = 50),"End": dt.timedelta(hours = 19, minutes = 41, seconds = 49, microseconds = 81)}
+
+  shooting_sbj1_ts = {"Start": dt.timedelta(hours = 18, minutes = 13, seconds = 31, microseconds = 40),"End": dt.timedelta(hours = 18, minutes = 15, seconds = 40, microseconds = 62)}
+  shooting_sbj2_ts = {"Start": dt.timedelta(hours = 19, minutes = 0, seconds = 18, microseconds = 58),"End": dt.timedelta(hours = 19, minutes = 2, seconds = 4, microseconds = 35)}
+
+  walking_sbj1_ts = {"Start": dt.timedelta(hours = 18, minutes = 42, seconds = 38, microseconds = 40),"End": dt.timedelta(hours = 18, minutes = 45, seconds = 16, microseconds = 45)}
+  walking_sbj2_ts = {"Start": dt.timedelta(hours = 19, minutes = 37, seconds = 19, microseconds = 24),"End": dt.timedelta(hours = 19, minutes = 39, seconds = 45, microseconds = 82)}
+
+
+  "7) Sensor Data"
+  AnkleData = [dribbling_sbj2_ankle, layup_sbj1_ankle, layup_sbj2_ankle,
+               movements_sbj1_ankle_1, movements_sbj1_ankle_2, movements_sbj2_ankle_1, movements_sbj2_ankle_2,
+               shooting_sbj1_ankle, shooting_sbj2_ankle_1, shooting_sbj2_ankle_2]
+  AnkleData = pd.concat(AnkleData,ignore_index=True)
+  AnkleData = AnkleData.sort_values(by=['time'])
+
+  WristData = [dribbling_sbj2_wrist, layup_sbj1_wrist, layup_sbj2_wrist,
+               movements_sbj1_wrist, movements_sbj2_wrist,
+               shooting_sbj1_wrist, shooting_sbj2_wrist]
+  WristData = pd.concat(WristData,ignore_index=True)
+  WristData = WristData.sort_values(by=['time'])
+
+  eSenseData = [eSense_sbj1, eSense_sbj2]
+  eSenseData = pd.concat(eSenseData,ignore_index=True)
+  eSenseData = eSenseData.sort_values(by=['time'])
+
+
+
+  "8) DownSampling the sensors' measurements" 
+
+  AnkleDataDS = pd.DataFrame()
+  WristDataDS = pd.DataFrame()
+  eSenseDataDS = pd.DataFrame()
+
+
+  for i in eSenseData.index:
+      if sum(AnkleData["time"]==eSenseData["time"][i]) & sum(WristData["time"]==eSenseData["time"][i]):
+          AnkleDataDS = AnkleDataDS.append([AnkleData[AnkleData["time"]==eSenseData["time"][i]]])
+          WristDataDS = WristDataDS.append([WristData[WristData["time"]==eSenseData["time"][i]]])
+          eSenseDataDS = eSenseDataDS.append(eSenseData.loc[[i]])
+
+
+  AnkleDataDS = AnkleDataDS.reset_index().drop(columns = ["index"])
+  WristDataDS = WristDataDS.reset_index().drop(columns = ["index"])
+  eSenseDataDS = eSenseDataDS.reset_index().drop(columns = ["index"])
+
+  "9) Compile all measurements to same dataframe in DataBase" 
+
+  DataBase = eSenseDataDS.drop(columns = ["device_name, ", "Label"])
+  DataBase = DataBase.rename(columns={"acc_x": "eSense_acc_x", "acc_y": "eSense_acc_y", "acc_z": "eSense_acc_z", " gyr_x": "eSense_gyr_x"," gyr_y": "eSense_gyr_y","gyr_z": "eSense_gyr_z"})
+
+  DataBase["Wrist_acc_x"] = WristDataDS["acc_x"]
+  DataBase["Wrist_acc_y"] = WristDataDS["acc_y"]
+  DataBase["Wrist_acc_z"] = WristDataDS["acc_z"]
+
+  DataBase["Ankle_acc_x"] = AnkleDataDS["acc_x"]
+  DataBase["Ankle_acc_y"] = AnkleDataDS["acc_y"]
+  DataBase["Ankle_acc_z"] = AnkleDataDS["acc_z"]
+
+  "10) Labelling" 
+
+  DataBase["Label"] = ["Null"] * len(DataBase)
+
+  DataBase.loc[((DataBase["time"] >= dribbling_sbj1_ts["Start"]) & (DataBase["time"] <= dribbling_sbj1_ts["End"])) | (((DataBase["time"] >= dribbling_sbj2_ts["Start"]) & (DataBase["time"] <= dribbling_sbj2_ts["End"]))), "Label"] = "Dribbling"
+  DataBase.loc[((DataBase["time"] >= layup_sbj1_ts["Start"]) & (DataBase["time"] <= layup_sbj1_ts["End"])) | (((DataBase["time"] >= layup_sbj2_ts["Start"]) & (DataBase["time"] <= layup_sbj2_ts["End"]))), "Label"] = "Layup"
+  DataBase.loc[((DataBase["time"] >= running_sbj1_ts["Start"]) & (DataBase["time"] <= running_sbj1_ts["End"])) | (((DataBase["time"] >= running_sbj2_ts["Start"]) & (DataBase["time"] <= running_sbj2_ts["End"]))), "Label"] = "Running"
+  DataBase.loc[((DataBase["time"] >= shooting_sbj1_ts["Start"]) & (DataBase["time"] <= shooting_sbj1_ts["End"])) | (((DataBase["time"] >= shooting_sbj2_ts["Start"]) & (DataBase["time"] <= shooting_sbj2_ts["End"]))), "Label"] = "Shooting"
+  DataBase.loc[((DataBase["time"] >= walking_sbj1_ts["Start"]) & (DataBase["time"] <= walking_sbj1_ts["End"])) | (((DataBase["time"] >= walking_sbj2_ts["Start"]) & (DataBase["time"] <= walking_sbj2_ts["End"]))), "Label"] = "Walking"
+
+
+  "11) Store our new Data" 
+
+  DataBase.to_csv("DataBase.csv")
+
