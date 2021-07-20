@@ -1,5 +1,8 @@
 # Basketball-Players-Activities-Recognition-Using-CNN
 
+Overview presentation:
+https://www.youtube.com/watch?v=MKoiuSpsWig
+
 Basketball Game Activity Recognition 
 
 Data overview:
