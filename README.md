@@ -6,7 +6,13 @@ Data overview: - 5+1 classes (shooting, layups, dribbling, running, walking and 
 
 Folders: - sensor_data: collected data from each sensor per subject
 
-First steps + general hints: 1. Correct the timestamp within the Bangle.js files - as the first timestamp is correct within each file and you know at which rate was sampled, you can calculate the correct timestamp for each record. 2. Upsample or downsample either the Bangle.js or eSense files using a method of your choice so that all files are assuming the same sampling rate (Hz). 3. Watch the videos and write down the timestamps at which each activity happened for which subject. 4. Merge all three files into one data frame (Hint: you need to account for there not being records of all three sensors at all times since sensors were started/ stopped at different times). 5. Apply the labeling obtained in step 3 to the data frame you obtained (remember that there is also a null class!) 6. Apply deep learning/ ML
+First steps + general hints: 
+1. Correct the timestamp within the Bangle.js files - as the first timestamp is correct within each file and you know at which rate was sampled, you can calculate the correct timestamp for each record. 
+2. Upsample or downsample either the Bangle.js or eSense files using a method of your choice so that all files are assuming the same sampling rate (Hz). 
+3. Starting and ending time of each activity mention down. 
+4. Merge all three files into one data frame (Hint: you need to account for there not being records of all three sensors at all times since sensors were started/ stopped at different times).
+5. Apply the labeling obtained in step 3 to the data frame you obtained (remember that there is also a null class!) 
+6. Apply deep learning/ ML
 
 	 
 Starting and ending time of each activity:
