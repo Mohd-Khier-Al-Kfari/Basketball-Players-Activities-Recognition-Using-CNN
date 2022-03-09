@@ -1,1 +1,0 @@
-The goal of this project is to recognize basketball game activities. These activities are shooting, layups, dribbling, running, walking, and null. For this purpose, we use three sensors; one eSense and two Bangle.js. Then analyze its data using signal processing and deep learning.
